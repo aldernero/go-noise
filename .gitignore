@@ -19,3 +19,7 @@
 
 # Go workspace file
 go.work
+/.idea/.gitignore
+/.idea/go-noise.iml
+/.idea/modules.xml
+/.idea/vcs.xml
