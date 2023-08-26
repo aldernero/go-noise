@@ -4,6 +4,9 @@ import (
 	"math"
 )
 
+// Based on KdotJPG's Java implementation of OpenSimplex2:
+// https://github.com/KdotJPG/OpenSimplex2
+
 const (
 	PRIME_X                  int64   = 0x5205402B9270C86F
 	PRIME_Y                  int64   = 0x598CD327003817B5
