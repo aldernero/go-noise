@@ -2,22 +2,11 @@ package opensimplex
 
 import (
 	"github.com/stretchr/testify/assert"
+	"math"
 	"testing"
 )
 
-var seeds = []int64{
-	0,
-	6845047037681957553,
-	-889035936178589214,
-	5687241166397060104,
-	1600028257088528775,
-	-6990463512481897515,
-	-660090321164161190,
-	-6797150038585736262,
-	734865179540493222,
-	5367682059639378599,
-	8692374301578362162,
-}
+var seeds = []int64{46, 38, 36, 40, 24, 52, 62, 49, 24, 55, math.MinInt64, math.MaxInt64}
 
 var testPoints = [][]float64{
 	{0.0, 0.0, 0.0, 0.0},
@@ -40,13 +29,72 @@ var testPoints = [][]float64{
 	{-273.8828247718006, -415.2073940611477, 421.3633385847502, 204.23686749655155},
 	{-438.4126186155904, 298.6136665587418, -166.74214332356064, -97.57623425824814},
 	{209.65011141985113, -286.0529615439887, 175.22853233110104, 331.9087430963689},
+	{math.MaxFloat64, -math.MaxFloat64, -math.SmallestNonzeroFloat64, math.SmallestNonzeroFloat64},
 }
 
 func TestNoise2D(t *testing.T) {
 	for _, seed := range seeds {
 		noise := NewOpenSimplex2(seed)
 		for _, point := range testPoints {
-			val := noise.Noise2D(point[0], point[1])
+			x := point[0]
+			y := point[1]
+			val := noise.Noise2D(x, y)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+			val = noise.Noise2DImproveX(x, y)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+		}
+	}
+}
+
+func TestNoise3D(t *testing.T) {
+	for _, seed := range seeds {
+		noise := NewOpenSimplex2(seed)
+		for _, point := range testPoints {
+			x := point[0]
+			y := point[1]
+			z := point[2]
+			val := noise.Noise3D(x, y, z)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+			val = noise.Noise3DImproveXY(x, y, z)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+			val = noise.Noise3DImproveXZ(x, y, z)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+			val = noise.Noise3DFallback(x, y, z)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+		}
+	}
+}
+
+func TestNoise4D(t *testing.T) {
+	for _, seed := range seeds {
+		noise := NewOpenSimplex2(seed)
+		for _, point := range testPoints {
+			x := point[0]
+			y := point[1]
+			z := point[2]
+			w := point[3]
+			val := noise.Noise4D(x, y, z, w)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+			val = noise.Noise4DImproveXYZImproveXY(x, y, z, w)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+			val = noise.Noise4DImproveXYZImproveXZ(x, y, z, w)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+			val = noise.Noise4DImproveXYZ(x, y, z, w)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+			val = noise.Noise4DImproveXZImproveZW(x, y, z, w)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
+			val = noise.Noise4DFallback(x, y, z, w)
 			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 		}
@@ -54,31 +102,28 @@ func TestNoise2D(t *testing.T) {
 }
 
 func BenchmarkOpenSimplex2_Noise2D(b *testing.B) {
+	noise := NewOpenSimplex2(42)
 	for i := 0; i < b.N; i++ {
-		for _, seed := range seeds {
-			noise := NewOpenSimplex2(seed)
-			for _, point := range testPoints {
-				noise.Noise2D(point[0], point[1])
-			}
+		for _, point := range testPoints {
+			noise.Noise2D(point[0], point[1])
 		}
 	}
 }
 
-func TestNoise3D(t *testing.T) {
-	seeds := []int64{1, 42, 0, -43}
-	for _, seed := range seeds {
-		noise := NewOpenSimplex2(seed)
-		points := [][]float64{
-			{0.0, 0.0},
-			{1.0, 0.0},
-			{0.0, 1.0},
-			{1.0, 1.0},
-			{-1000.3, 0.57},
+func BenchmarkOpenSimplex2_Noise3D(b *testing.B) {
+	noise := NewOpenSimplex2(42)
+	for i := 0; i < b.N; i++ {
+		for _, point := range testPoints {
+			noise.Noise3D(point[0], point[1], point[2])
 		}
-		for _, point := range points {
-			val := noise.Noise2D(point[0], point[1])
-			assert.GreaterOrEqual(t, val, -1.0)
-			assert.LessOrEqual(t, val, 1.0)
+	}
+}
+
+func BenchmarkOpenSimplex2_Noise4D(b *testing.B) {
+	noise := NewOpenSimplex2(42)
+	for i := 0; i < b.N; i++ {
+		for _, point := range testPoints {
+			noise.Noise4D(point[0], point[1], point[2], point[3])
 		}
 	}
 }
