@@ -48,6 +48,10 @@ type Simplex struct {
 	grads4      [640]float64
 }
 
+func (o Simplex) SetSeed(seed int64) {
+	o.seed = seed
+}
+
 func (o Simplex) Init(seed int64) {
 	o.seed = seed
 	//o.gradients2d = make([]float64, NGrads2d*2)
