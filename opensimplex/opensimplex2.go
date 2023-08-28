@@ -48,11 +48,11 @@ type Simplex struct {
 	grads4      [640]float64
 }
 
-func (o Simplex) SetSeed(seed int64) {
+func (o *Simplex) SetSeed(seed int64) {
 	o.seed = seed
 }
 
-func (o Simplex) Init(seed int64) {
+func (o *Simplex) Init(seed int64) {
 	o.seed = seed
 	//o.gradients2d = make([]float64, NGrads2d*2)
 	o.grads2 = [48]float64{
@@ -327,7 +327,7 @@ func NewOpenSimplex2(seed int64) *Simplex {
 // 2D
 
 // Noise2D generates 2D Simplex noise with standard lattice orientation.
-func (o Simplex) Noise2D(x, y float64) float64 {
+func (o *Simplex) Noise2D(x, y float64) float64 {
 	s := Skew2d * (x + y)
 	xs := x + s
 	ys := y + s
@@ -335,14 +335,14 @@ func (o Simplex) Noise2D(x, y float64) float64 {
 }
 
 // Noise2DImproveX generates 2D Simplex noise with Y pointing down the main diagonal.
-func (o Simplex) Noise2DImproveX(x, y float64) float64 {
+func (o *Simplex) Noise2DImproveX(x, y float64) float64 {
 	xx := x * ROOT2OVER2
 	yy := y * (ROOT2OVER2 * (1 + 2*Skew2d))
 	return o.noise2UnskewedBase(xx+yy, yy-xx)
 }
 
 // noise2UnskewedBase is the base function for 2D Simplex noise
-func (o Simplex) noise2UnskewedBase(x, y float64) float64 {
+func (o *Simplex) noise2UnskewedBase(x, y float64) float64 {
 	// Get base points and offsets.
 	xInt, xFrac := math.Modf(x)
 	yInt, yFrac := math.Modf(y)
@@ -393,7 +393,7 @@ func (o Simplex) noise2UnskewedBase(x, y float64) float64 {
 // 3D
 
 // Picked a default, see various implementations below
-func (o Simplex) Noise3D(x, y, z float64) float64 {
+func (o *Simplex) Noise3D(x, y, z float64) float64 {
 	return o.Noise3DImproveXY(x, y, z)
 }
 
@@ -405,7 +405,7 @@ func (o Simplex) Noise3D(x, y, z float64) float64 {
  * If Z is vertical in world coordinates, call noise3_ImproveXZ(x, y, Z).
  * For a time varied animation, call noise3_ImproveXY(x, y, T).
  */
-func (o Simplex) Noise3DImproveXY(x, y, z float64) float64 {
+func (o *Simplex) Noise3DImproveXY(x, y, z float64) float64 {
 	// Re-orient the cubic lattices without skewing, so Z points up the main lattice diagonal,
 	// and the planes formed by XY are moved far out of alignment with the cube faces.
 	// Orthonormal rotation. Not a skew transform.
@@ -428,7 +428,7 @@ func (o Simplex) Noise3DImproveXY(x, y, z float64) float64 {
  * If Z is vertical in world coordinates, call noise3_ImproveXZ(x, Z, y) or use noise3_ImproveXY.
  * For a time varied animation, call noise3_ImproveXZ(x, T, y) or use noise3_ImproveXY.
  */
-func (o Simplex) Noise3DImproveXZ(x, y, z float64) float64 {
+func (o *Simplex) Noise3DImproveXZ(x, y, z float64) float64 {
 	// Re-orient the cubic lattices without skewing, so Y points up the main lattice diagonal,
 	// and the planes formed by XZ are moved far out of alignment with the cube faces.
 	// Orthonormal rotation. Not a skew transform.
@@ -448,7 +448,7 @@ func (o Simplex) Noise3DImproveXZ(x, y, z float64) float64 {
  * Use noise3_ImproveXY or noise3_ImproveXZ instead, wherever appropriate.
  * They have less diagonal bias. This function's best use is as a fallback.
  */
-func (o Simplex) Noise3DFallback(x, y, z float64) float64 {
+func (o *Simplex) Noise3DFallback(x, y, z float64) float64 {
 	// Re-orient the cubic lattices via rotation, to produce a familiar look.
 	// Orthonormal rotation. Not a skew transform.
 	r := FallbackRotate3d * (x + y + z)
@@ -460,7 +460,7 @@ func (o Simplex) Noise3DFallback(x, y, z float64) float64 {
 	return o.noise3UnrotatedBase(xr, yr, zr)
 }
 
-func (o Simplex) noise3UnrotatedBase(xr float64, yr float64, zr float64) float64 {
+func (o *Simplex) noise3UnrotatedBase(xr float64, yr float64, zr float64) float64 {
 	// Get base points and offsets.
 	xrb := fastRound(xr)
 	yrb := fastRound(yr)
@@ -548,7 +548,7 @@ func (o Simplex) noise3UnrotatedBase(xr float64, yr float64, zr float64) float64
 // 4D
 
 // Picked a default, see various implementations below
-func (o Simplex) Noise4D(x, y, z, w float64) float64 {
+func (o *Simplex) Noise4D(x, y, z, w float64) float64 {
 	return o.Noise4DImproveXYZImproveXZ(x, y, z, w)
 }
 
@@ -558,7 +558,7 @@ func (o Simplex) Noise4D(x, y, z, w float64) float64 {
  * Recommended for time-varied animations which texture a 3D object (W=time)
  * in a space where Z is vertical
  */
-func (o Simplex) Noise4DImproveXYZImproveXY(x, y, z, w float64) float64 {
+func (o *Simplex) Noise4DImproveXYZImproveXY(x, y, z, w float64) float64 {
 	xy := x + y
 	s2 := xy * -0.21132486540518699998
 	zz := z * 0.28867513459481294226
@@ -577,7 +577,7 @@ func (o Simplex) Noise4DImproveXYZImproveXY(x, y, z, w float64) float64 {
  * Recommended for time-varied animations which texture a 3D object (W=time)
  * in a space where Y is vertical
  */
-func (o Simplex) Noise4DImproveXYZImproveXZ(x, y, z, w float64) float64 {
+func (o *Simplex) Noise4DImproveXYZImproveXZ(x, y, z, w float64) float64 {
 	xz := x + z
 	s2 := xz * -0.21132486540518699998
 	yy := y * 0.28867513459481294226
@@ -596,7 +596,7 @@ func (o Simplex) Noise4DImproveXYZImproveXZ(x, y, z, w float64) float64 {
  * Recommended for time-varied animations which texture a 3D object (W=time)
  * where there isn't a clear distinction between horizontal and vertical
  */
-func (o Simplex) Noise4DImproveXYZ(x, y, z, w float64) float64 {
+func (o *Simplex) Noise4DImproveXYZ(x, y, z, w float64) float64 {
 	xyz := x + y + z
 	ww := w * 0.2236067977499788
 	s2 := xyz*-0.16666666666666666 + ww
@@ -613,7 +613,7 @@ func (o Simplex) Noise4DImproveXYZ(x, y, z, w float64) float64 {
  * Recommended for 3D terrain, where X and Y (or Z and W) are horizontal.
  * Recommended for noise(x, y, sin(time), cos(time)) trick.
  */
-func (o Simplex) Noise4DImproveXZImproveZW(x, y, z, w float64) float64 {
+func (o *Simplex) Noise4DImproveXZImproveZW(x, y, z, w float64) float64 {
 	s2 := (x+y)*-0.178275657951399372 + (z+w)*0.215623393288842828
 	t2 := (z+w)*-0.403949762580207112 + (x+y)*-0.375199083010075342
 	xs := x + s2
@@ -625,7 +625,7 @@ func (o Simplex) Noise4DImproveXZImproveZW(x, y, z, w float64) float64 {
 }
 
 // 4D Simplex noise, fallback lattice orientation.
-func (o Simplex) Noise4DFallback(x, y, z, w float64) float64 {
+func (o *Simplex) Noise4DFallback(x, y, z, w float64) float64 {
 	// Get points for A4 lattice
 	s := Skew4d * (x + y + z + w)
 	xs := x + s
@@ -636,7 +636,7 @@ func (o Simplex) Noise4DFallback(x, y, z, w float64) float64 {
 	return o.noise4UnskewedBase(xs, ys, zs, ws)
 }
 
-func (o Simplex) noise4UnskewedBase(x, y, z, w float64) float64 {
+func (o *Simplex) noise4UnskewedBase(x, y, z, w float64) float64 {
 	// Get base points and offsets.
 	xInt, xFrac := math.Modf(x)
 	yInt, yFrac := math.Modf(y)
@@ -728,7 +728,7 @@ func (o Simplex) noise4UnskewedBase(x, y, z, w float64) float64 {
 	return value
 }
 
-func (o Simplex) grad2D(xsvp int64, ysvp int64, dx0 float64, dy0 float64) float64 {
+func (o *Simplex) grad2D(xsvp int64, ysvp int64, dx0 float64, dy0 float64) float64 {
 	hash := o.seed ^ xsvp ^ ysvp
 	hash *= HashMultiplier
 	hash ^= hash >> (64 - NGrads2dExponent + 1)
@@ -736,7 +736,7 @@ func (o Simplex) grad2D(xsvp int64, ysvp int64, dx0 float64, dy0 float64) float6
 	return o.gradients2d[gi|0]*dx0 + o.gradients2d[gi|1]*dy0
 }
 
-func (o Simplex) grad3D(xsvp int64, ysvp int64, zsvp int64, dx0 float64, dy0 float64, dz0 float64) float64 {
+func (o *Simplex) grad3D(xsvp int64, ysvp int64, zsvp int64, dx0 float64, dy0 float64, dz0 float64) float64 {
 	hash := (o.seed ^ xsvp) ^ (ysvp ^ zsvp)
 	hash *= HashMultiplier
 	hash ^= hash >> (64 - NGrads3dExponent + 2)
@@ -744,7 +744,7 @@ func (o Simplex) grad3D(xsvp int64, ysvp int64, zsvp int64, dx0 float64, dy0 flo
 	return o.gradients3d[gi|0]*dx0 + o.gradients3d[gi|1]*dy0 + o.gradients3d[gi|2]*dz0
 }
 
-func (o Simplex) grad4D(xsvp int64, ysvp int64, zsvp int64, wsvp int64, dx0 float64, dy0 float64, dz0 float64, dw0 float64) float64 {
+func (o *Simplex) grad4D(xsvp int64, ysvp int64, zsvp int64, wsvp int64, dx0 float64, dy0 float64, dz0 float64, dw0 float64) float64 {
 	hash := o.seed ^ (xsvp ^ ysvp) ^ (zsvp ^ wsvp)
 	hash *= HashMultiplier
 	hash ^= hash >> (64 - NGrads4dExponent + 2)

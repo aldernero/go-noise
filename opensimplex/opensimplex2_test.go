@@ -39,10 +39,10 @@ func TestNoise2D(t *testing.T) {
 			x := point[0]
 			y := point[1]
 			val := noise.Noise2D(x, y)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 			val = noise.Noise2DImproveX(x, y)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 		}
 	}
@@ -56,16 +56,16 @@ func TestNoise3D(t *testing.T) {
 			y := point[1]
 			z := point[2]
 			val := noise.Noise3D(x, y, z)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 			val = noise.Noise3DImproveXY(x, y, z)
-			assert.GreaterOrEqual(t, val, 0.0)
-			assert.LessOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
+			assert.LessOrEqual(t, val, 1.0)
 			val = noise.Noise3DImproveXZ(x, y, z)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 			val = noise.Noise3DFallback(x, y, z)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 		}
 	}
@@ -80,22 +80,22 @@ func TestNoise4D(t *testing.T) {
 			z := point[2]
 			w := point[3]
 			val := noise.Noise4D(x, y, z, w)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 			val = noise.Noise4DImproveXYZImproveXY(x, y, z, w)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 			val = noise.Noise4DImproveXYZImproveXZ(x, y, z, w)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 			val = noise.Noise4DImproveXYZ(x, y, z, w)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 			val = noise.Noise4DImproveXZImproveZW(x, y, z, w)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 			val = noise.Noise4DFallback(x, y, z, w)
-			assert.GreaterOrEqual(t, val, 0.0)
+			assert.GreaterOrEqual(t, val, -1.0)
 			assert.LessOrEqual(t, val, 1.0)
 		}
 	}
