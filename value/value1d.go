@@ -28,7 +28,7 @@ type Noise1D struct {
 }
 
 func NewNoise1D(seed uint64) *Noise1D {
-	return &Noise1D{
+	noise := Noise1D{
 		Seed:    seed,
 		Octaves: DefaultOctaves,
 		Knots:   DefaultKnots,
@@ -37,6 +37,8 @@ func NewNoise1D(seed uint64) *Noise1D {
 		MinY:    DefaultMinY,
 		MaxY:    DefaultMaxY,
 	}
+	noise.init()
+	return &noise
 }
 
 func (n *Noise1D) init() {
