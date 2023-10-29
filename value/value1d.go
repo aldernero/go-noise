@@ -37,11 +37,10 @@ func NewNoise1D(seed uint64) *Noise1D {
 		MinY:    DefaultMinY,
 		MaxY:    DefaultMaxY,
 	}
-	noise.init()
 	return &noise
 }
 
-func (n *Noise1D) init() {
+func (n *Noise1D) Init() {
 	n.rng = gaul.NewLFSRLargeWithSeed(n.Seed)
 	n.splines = []interp.CubicSpline{}
 	amplitude := SplineOverflowFactor
