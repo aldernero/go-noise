@@ -32,14 +32,14 @@ func NewNoise2D(seed uint64, xKnots, yKnots, octaves int, rect gaul.Rect) *Noise
 	noise.hNoise = make([]*Noise1D, xKnots)
 	noise.vNoise = make([]*Noise1D, yKnots)
 	for i := range noise.xKnots {
-		noise.vNoise[i] = NewNoise1D(noise.Seed)
+		noise.vNoise[i] = NewNoise1D(noise.Seed + uint64(i))
 		noise.vNoise[i].Octaves = noise.Octaves
 		noise.vNoise[i].MinX = noise.MinY
 		noise.vNoise[i].MaxX = noise.MaxY
 		noise.vNoise[i].Init()
 	}
 	for i := range noise.yKnots {
-		noise.hNoise[i] = NewNoise1D(noise.Seed)
+		noise.hNoise[i] = NewNoise1D(noise.Seed + 42*uint64(i))
 		noise.hNoise[i].Octaves = noise.Octaves
 		noise.hNoise[i].MinX = noise.MinX
 		noise.hNoise[i].MaxX = noise.MaxX
