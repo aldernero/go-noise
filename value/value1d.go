@@ -3,7 +3,6 @@ package value
 import (
 	"github.com/aldernero/gaul"
 	"github.com/aldernero/interp"
-	"math"
 )
 
 const (
@@ -11,20 +10,24 @@ const (
 	DefaultKnots         = 3
 	DefaultMinX          = 0
 	DefaultMaxX          = 1
-	DefaultMinY          = -1
-	DefaultMaxY          = 1
 	SplineOverflowFactor = 0.9
 )
 
+var powerOfTwo func(int) int = func(i int) int {
+	return 1 << i
+}
+
 type Noise1D struct {
-	Seed       uint64
-	Octaves    int
-	Knots      int
-	MinX, MaxX float64
-	MinY, MaxY float64
-	rng        gaul.LFSRLarge
-	maxAmp     float64
-	splines    []interp.CubicSpline
+	Seed            uint64
+	Octaves         int
+	Knots           int
+	MinX, MaxX      float64
+	SplineCountFunc func(int) float64
+	KnotCountFunc   func(int) int
+	AmpScaleFunc    func(int) float64
+	rng             gaul.LFSRLarge
+	maxAmp          float64
+	splines         []interp.CubicSpline
 }
 
 func NewNoise1D(seed uint64) *Noise1D {
@@ -34,8 +37,15 @@ func NewNoise1D(seed uint64) *Noise1D {
 		Knots:   DefaultKnots,
 		MinX:    DefaultMinX,
 		MaxX:    DefaultMaxX,
-		MinY:    DefaultMinY,
-		MaxY:    DefaultMaxY,
+		SplineCountFunc: func(i int) float64 {
+			return float64(powerOfTwo(i))
+		},
+		KnotCountFunc: func(i int) int {
+			return powerOfTwo(i)
+		},
+		AmpScaleFunc: func(i int) float64 {
+			return SplineOverflowFactor / float64(powerOfTwo(i))
+		},
 	}
 	return &noise
 }
@@ -43,10 +53,10 @@ func NewNoise1D(seed uint64) *Noise1D {
 func (n *Noise1D) Init() {
 	n.rng = gaul.NewLFSRLargeWithSeed(n.Seed)
 	n.splines = []interp.CubicSpline{}
-	amplitude := SplineOverflowFactor
-	knots := n.Knots
 	for i := 0; i < n.Octaves; i++ {
-		p := math.Pow(2, float64(i))
+		p := n.SplineCountFunc(i)
+		knots := n.KnotCountFunc(i)
+		amplitude := n.AmpScaleFunc(i)
 		n.maxAmp += amplitude
 		for j := 0; j < int(p); j++ {
 			xs := gaul.Linspace(n.MinX, n.MaxX, knots+2, true)
@@ -57,8 +67,6 @@ func (n *Noise1D) Init() {
 			spline, _ := interp.NewCubicSpline(xs, ys)
 			n.splines = append(n.splines, spline)
 		}
-		knots *= 2
-		amplitude /= 2
 	}
 }
 
@@ -67,5 +75,13 @@ func (n *Noise1D) Eval(x float64) float64 {
 	for _, spline := range n.splines {
 		y += spline.Eval(x)
 	}
-	return gaul.Map(-n.maxAmp, n.maxAmp, n.MinY, n.MaxY, y)
+	return gaul.Map(-n.maxAmp, n.maxAmp, 0, 1, y)
+}
+
+func (n *Noise1D) EvalSigned(x float64) float64 {
+	y := 0.0
+	for _, spline := range n.splines {
+		y += spline.Eval(x)
+	}
+	return gaul.Map(-n.maxAmp, n.maxAmp, -1, 1, y)
 }

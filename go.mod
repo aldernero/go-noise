@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/aldernero/gaul v0.0.0-20231026150619-7486b726447d
-	github.com/aldernero/interp v0.0.0-20231104205144-29bdb1c294f2
+	github.com/aldernero/interp v0.0.0-20231105222123-17f1dc99d484
 	github.com/stretchr/testify v1.8.4
 )
 

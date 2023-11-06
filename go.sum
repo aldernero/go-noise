@@ -8,6 +8,8 @@ github.com/aldernero/interp v0.0.0-20231026145645-d37dcedf63b5 h1:vFTpFwHazApOkc
 github.com/aldernero/interp v0.0.0-20231026145645-d37dcedf63b5/go.mod h1:m2qXCvyUGDX7/wj1uq7Lmcub35OehMt/uM0WSG5qy3w=
 github.com/aldernero/interp v0.0.0-20231104205144-29bdb1c294f2 h1:GGLuxckJK31vw8Xm0GwfAyHFWQyI2PwlZX2syE/MGp4=
 github.com/aldernero/interp v0.0.0-20231104205144-29bdb1c294f2/go.mod h1:m2qXCvyUGDX7/wj1uq7Lmcub35OehMt/uM0WSG5qy3w=
+github.com/aldernero/interp v0.0.0-20231105222123-17f1dc99d484 h1:9uMxIgJ9mYzix+x7aqvBnkQ6nRkxdlHw0/C7l3n63RU=
+github.com/aldernero/interp v0.0.0-20231105222123-17f1dc99d484/go.mod h1:m2qXCvyUGDX7/wj1uq7Lmcub35OehMt/uM0WSG5qy3w=
 github.com/benoitkugler/pstokenizer v1.0.0/go.mod h1:l1G2Voirz0q/jj0TQfabNxVsa8HZXh/VMxFSRALWTiE=
 github.com/benoitkugler/textlayout v0.3.0 h1:2ehWXEkgb6RUokTjXh1LzdGwG4dRP6X3dqhYYDYhUVk=
 github.com/benoitkugler/textlayout v0.3.0/go.mod h1:o+1hFV+JSHBC9qNLIuwVoLedERU7sBPgEFcuSgfvi/w=
