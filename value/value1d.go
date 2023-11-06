@@ -22,7 +22,7 @@ type Noise1D struct {
 	Octaves         int
 	Knots           int
 	MinX, MaxX      float64
-	SplineCountFunc func(int) float64
+	SplineCountFunc func(int) int
 	KnotCountFunc   func(int) int
 	AmpScaleFunc    func(int) float64
 	rng             gaul.LFSRLarge
@@ -37,8 +37,8 @@ func NewNoise1D(seed uint64) *Noise1D {
 		Knots:   DefaultKnots,
 		MinX:    DefaultMinX,
 		MaxX:    DefaultMaxX,
-		SplineCountFunc: func(i int) float64 {
-			return float64(powerOfTwo(i))
+		SplineCountFunc: func(i int) int {
+			return powerOfTwo(i)
 		},
 		KnotCountFunc: func(i int) int {
 			return powerOfTwo(i)
@@ -58,7 +58,7 @@ func (n *Noise1D) Init() {
 		knots := n.KnotCountFunc(i)
 		amplitude := n.AmpScaleFunc(i)
 		n.maxAmp += amplitude * float64(p)
-		for j := 0; j < int(p); j++ {
+		for j := 0; j < p; j++ {
 			xs := gaul.Linspace(n.MinX, n.MaxX, knots+2, true)
 			ys := make([]float64, knots+2)
 			for k := 0; k < knots+2; k++ {
