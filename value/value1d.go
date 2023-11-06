@@ -57,12 +57,12 @@ func (n *Noise1D) Init() {
 		p := n.SplineCountFunc(i)
 		knots := n.KnotCountFunc(i)
 		amplitude := n.AmpScaleFunc(i)
-		n.maxAmp += amplitude
+		n.maxAmp += amplitude * float64(p)
 		for j := 0; j < int(p); j++ {
 			xs := gaul.Linspace(n.MinX, n.MaxX, knots+2, true)
 			ys := make([]float64, knots+2)
 			for k := 0; k < knots+2; k++ {
-				ys[k] = amplitude * gaul.Map(0, 1, -1, 1, n.rng.Float64()) / p
+				ys[k] = amplitude * gaul.Map(0, 1, -1, 1, n.rng.Float64())
 			}
 			spline, _ := interp.NewCubicSpline(xs, ys)
 			n.splines = append(n.splines, spline)
