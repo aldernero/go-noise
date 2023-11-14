@@ -64,7 +64,7 @@ func (n *Noise1D) Init() {
 			for k := 0; k < knots+2; k++ {
 				ys[k] = amplitude * gaul.Map(0, 1, -1, 1, n.rng.Float64())
 			}
-			spline, _ := interp.NewCubicSpline(xs, ys)
+			spline, _ := interp.NewRegularCubicSpline(xs, ys)
 			n.splines = append(n.splines, spline)
 		}
 	}
