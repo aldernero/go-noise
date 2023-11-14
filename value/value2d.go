@@ -29,8 +29,8 @@ func NewNoise2D(seed uint64, xKnots, yKnots, octaves int, rect gaul.Rect) *Noise
 	noise.rng = gaul.NewLFSRLargeWithSeed(noise.Seed)
 	noise.xKnots = gaul.Linspace(noise.MinX, noise.MaxX, xKnots, true)
 	noise.yKnots = gaul.Linspace(noise.MinY, noise.MaxY, yKnots, true)
-	noise.hNoise = make([]*Noise1D, xKnots)
-	noise.vNoise = make([]*Noise1D, yKnots)
+	noise.hNoise = make([]*Noise1D, yKnots)
+	noise.vNoise = make([]*Noise1D, xKnots)
 	for i := range noise.xKnots {
 		noise.vNoise[i] = NewNoise1D(noise.Seed)
 		noise.vNoise[i].Octaves = noise.Octaves
